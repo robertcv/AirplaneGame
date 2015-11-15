@@ -46,9 +46,9 @@
 		<script src="js/ImageLoader.js"></script>
 
 		<script>
-
+			
 			if ( ! Detector.webgl ) {
-
+		
 				Detector.addGetWebGLMessage();
 				document.getElementById( 'container' ).innerHTML = "";
 
@@ -60,7 +60,7 @@
 
 			var mesh, texture;
 
-			// öirina platna
+			// ≈°irina platna
 			var worldWidth = 512, worldDepth = 512,
 			worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 
@@ -69,13 +69,14 @@
 
 			var helper;
 
-
-
+			
+			var hitrost;
 			init();
 			animate();
+			
 
 			function init() {
-
+				hitrost = 0;
 				//definiramo novo sceno
 				container = document.getElementById( 'container' );
 				scene = new THREE.Scene();
@@ -85,15 +86,15 @@
 				camera.position.set(1000,2000,3000);
 				camera.lookAt(scene.position);
 
-				//tukaj kliËemo funkcijo ki nam vrne podatke, ki jih uporabimo za generiranje terena
+				//tukaj kliƒçemo funkcijo ki nam vrne podatke, ki jih uporabimo za generiranje terena
 				data = generateHeight( worldWidth, worldDepth );
-				//te podatke lahko izpiöemo v konzolo
+				//te podatke lahko izpi≈°emo v konzolo
 				console.log(data);
 				//naredimo novo ravnino katero bomo preoblikovali v nek teren
 				var geometry = new THREE.PlaneBufferGeometry( 30000, 30000, worldWidth - 1, worldDepth - 1 );
-				//geometrijo rotiramo za -90, ker ima default navpiËno se mi zdi
+				//geometrijo rotiramo za -90, ker ima default navpiƒçno se mi zdi
 				geometry.rotateX( - Math.PI / 2 );
-				//to je seznam vseh toËk, ki jim bomo spremenili parametre, da dobimo razgibanost
+				//to je seznam vseh toƒçk, ki jim bomo spremenili parametre, da dobimo razgibanost
 				var vertices = geometry.attributes.position.array;
 
 				for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
@@ -104,7 +105,7 @@
 
 				geometry.computeFaceNormals();
 
-				//nardimo texturo z to funkcijo se nisem preveË ukvarjal, ker mgoË bomo tko dal uno blander varjanto
+				//nardimo texturo z to funkcijo se nisem preveƒç ukvarjal, ker mgoƒç bomo tko dal uno blander varjanto
 				texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
 				texture.wrapS = THREE.ClampToEdgeWrapping;
 				texture.wrapT = THREE.ClampToEdgeWrapping;
@@ -136,7 +137,51 @@
 				scene.add( ambient );
 
 				//LETALO
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
 
+				var planeTexture = new THREE.Texture();
+
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader = new THREE.ImageLoader( manager );
+				loader.load( 'mustang/BodyTexture.bmp', function ( image ) {
+					planeTexture.image = image;
+					planeTexture.needsUpdate = true;
+				} );
+
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'mustang/mustang.obj', function ( object ) {
+
+						object.traverse( function ( child ) {
+
+							if ( child instanceof THREE.Mesh ) {
+
+								child.material.map = planeTexture;
+
+						}
+					} );
+
+					object.position.y = 10000;
+					object.position.z = 1300;
+					object.position.x = 1500;
+                    object.scale.x = 0.1;
+                    object.scale.y = 0.1;
+                    object.scale.z = 0.1;
+					object.rotation.x = 200;
+                    MovingCube = object
+					scene.add( MovingCube );
+
+				} , onProgress, onError );
 
     			//KOVANEC
 				var coinTexture = new THREE.ImageUtils.loadTexture( 'images/kovanc.png' );
@@ -202,78 +247,28 @@
 
 			var MovingCube;
 			var Cylinder, Cylinder2, sunSphere;
+			
 
-
-			function airplane(){
-				var manager = new THREE.LoadingManager();
-				manager.onProgress = function ( item, loaded, total ) {
-					console.log( item, loaded, total );
-				};
-
-				var planeTexture = new THREE.Texture();
-
-				var onProgress = function ( xhr ) {
-					if ( xhr.lengthComputable ) {
-						var percentComplete = xhr.loaded / xhr.total * 100;
-						console.log( Math.round(percentComplete, 2) + '% downloaded' );
-					}
-				};
-				var onError = function ( xhr ) {
-				};
-				var loader = new THREE.ImageLoader( manager );
-				loader.load( 'mustang/BodyTexture.bmp', function ( image ) {
-					planeTexture.image = image;
-					planeTexture.needsUpdate = true;
-				} );
-
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'mustang/mustang.obj', function ( object ) {
-
-						object.traverse( function ( child ) {
-
-							if ( child instanceof THREE.Mesh ) {
-
-								child.material.map = planeTexture;
-
-						}
-					} );
-
-					object.position.y = 10000;
-					object.position.z = 1300;
-					object.position.x = 1500;
-                    object.scale.x = 0.1;
-                    object.scale.y = 0.1;
-                    object.scale.z = 0.1;
-					object.rotation.x = 200;
-                    MovingCube = object
-					scene.add( MovingCube );
-
-				} , onProgress, onError );
-
-			}
-
-			function update(){
-				var hitrost = 0;
-				var moveDistance = 20 ;
+			function update(){				
+				
 				var rotateAngle = Math.PI / 100 ;
 				Cylinder.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 				Cylinder2.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
-				sunSphere.translateY(2.5 * moveDistance);
+				sunSphere.translateY(2.5 * hitrost);
 				sunSphere.rotateX( rotateAngle / 9.3 );
 				// gravitacija
 
-				MovingCube.translateOnAxis( new THREE.Vector3(0,1,0), (hitrost - moveDistance)/ 2 );
+				MovingCube.position.y -= (hitrost - 20)/ 2;
 
 
 			// move forwards/backwards/left/right
 				if ( keyboard.pressed("W") && hitrost <= 20 ){
-					hitrost += 20;
+					hitrost += 2;
 					MovingCube.translateZ( hitrost );
 				}
 
 				if ( keyboard.pressed("S") && hitrost > 0 ){
-					hitrost -= 20;
+					hitrost -= 2;
 					MovingCube.translateZ( hitrost );
 				}
 				// rotate left/right/up/down
