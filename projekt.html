@@ -70,7 +70,7 @@
 			var helper;
 
 
-			var hitrost = 30;
+			var hitrost = 0;
 			init();
 			animate();
 			
@@ -258,11 +258,11 @@
 				sunSphere.rotateX( rotateAngle / 9.3 );
 				// gravitacija
 
-				MovingCube.position.y -= (hitrost - 20)/ 2;
+				MovingCube.position.y += (hitrost - 20)/ 2;
 
 
 			// move forwards/backwards/left/right
-				if ( keyboard.pressed("W") && hitrost <= 50 ){
+				if ( keyboard.pressed("W") && hitrost <= 20 ){
 					hitrost += 2;
 				}
 
