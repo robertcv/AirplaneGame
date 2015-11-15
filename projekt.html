@@ -46,9 +46,9 @@
 		<script src="js/ImageLoader.js"></script>
 
 		<script>
-			//test
+
 			if ( ! Detector.webgl ) {
-						//test alsdlla
+
 				Detector.addGetWebGLMessage();
 				document.getElementById( 'container' ).innerHTML = "";
 
@@ -60,6 +60,7 @@
 
 			var mesh, texture;
 
+			// širina platna
 			var worldWidth = 512, worldDepth = 512,
 			worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 
@@ -75,20 +76,24 @@
 
 			function init() {
 
+				//definiramo novo sceno
 				container = document.getElementById( 'container' );
 				scene = new THREE.Scene();
-
+				//deefiniramo novo perspektivno kamero
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 40000 );
 				scene.add(camera);
 				camera.position.set(1000,2000,3000);
 				camera.lookAt(scene.position);
 
+				//tukaj klièemo funkcijo ki nam vrne podatke, ki jih uporabimo za generiranje terena
 				data = generateHeight( worldWidth, worldDepth );
+				//te podatke lahko izpišemo v konzolo
 				console.log(data);
-
+				//naredimo novo ravnino katero bomo preoblikovali v nek teren
 				var geometry = new THREE.PlaneBufferGeometry( 30000, 30000, worldWidth - 1, worldDepth - 1 );
+				//geometrijo rotiramo za -90, ker ima default navpièno se mi zdi
 				geometry.rotateX( - Math.PI / 2 );
-
+				//to je seznam vseh toèk, ki jim bomo spremenili parametre, da dobimo razgibanost
 				var vertices = geometry.attributes.position.array;
 
 				for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
@@ -99,10 +104,12 @@
 
 				geometry.computeFaceNormals();
 
+				//nardimo texturo z to funkcijo se nisem preveè ukvarjal, ker mgoè bomo tko dal uno blander varjanto
 				texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
 				texture.wrapS = THREE.ClampToEdgeWrapping;
 				texture.wrapT = THREE.ClampToEdgeWrapping;
 
+				//nardimo nov mesh(objekt) ki mu damo geometrijo od zgoraj in to texturo
 				mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture } ) );
 				scene.add( mesh );
 
