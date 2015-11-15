@@ -136,51 +136,7 @@
 				scene.add( ambient );
 
 				//LETALO
-				var manager = new THREE.LoadingManager();
-				manager.onProgress = function ( item, loaded, total ) {
-					console.log( item, loaded, total );
-				};
 
-				var planeTexture = new THREE.Texture();
-
-				var onProgress = function ( xhr ) {
-					if ( xhr.lengthComputable ) {
-						var percentComplete = xhr.loaded / xhr.total * 100;
-						console.log( Math.round(percentComplete, 2) + '% downloaded' );
-					}
-				};
-				var onError = function ( xhr ) {
-				};
-				var loader = new THREE.ImageLoader( manager );
-				loader.load( 'mustang/BodyTexture.bmp', function ( image ) {
-					planeTexture.image = image;
-					planeTexture.needsUpdate = true;
-				} );
-
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'mustang/mustang.obj', function ( object ) {
-
-						object.traverse( function ( child ) {
-
-							if ( child instanceof THREE.Mesh ) {
-
-								child.material.map = planeTexture;
-
-						}
-					} );
-
-					object.position.y = 10000;
-					object.position.z = 1300;
-					object.position.x = 1500;
-                    object.scale.x = 0.1;
-                    object.scale.y = 0.1;
-                    object.scale.z = 0.1;
-					object.rotation.x = 200;
-                    MovingCube = object
-					scene.add( MovingCube );
-
-				} , onProgress, onError );
 
     			//KOVANEC
 				var coinTexture = new THREE.ImageUtils.loadTexture( 'images/kovanc.png' );
@@ -247,6 +203,55 @@
 			var MovingCube;
 			var Cylinder, Cylinder2, sunSphere;
 
+
+			function airplane(){
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
+
+				var planeTexture = new THREE.Texture();
+
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader = new THREE.ImageLoader( manager );
+				loader.load( 'mustang/BodyTexture.bmp', function ( image ) {
+					planeTexture.image = image;
+					planeTexture.needsUpdate = true;
+				} );
+
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'mustang/mustang.obj', function ( object ) {
+
+						object.traverse( function ( child ) {
+
+							if ( child instanceof THREE.Mesh ) {
+
+								child.material.map = planeTexture;
+
+						}
+					} );
+
+					object.position.y = 10000;
+					object.position.z = 1300;
+					object.position.x = 1500;
+                    object.scale.x = 0.1;
+                    object.scale.y = 0.1;
+                    object.scale.z = 0.1;
+					object.rotation.x = 200;
+                    MovingCube = object
+					scene.add( MovingCube );
+
+				} , onProgress, onError );
+
+			}
 
 			function update(){
 				var hitrost = 0;
