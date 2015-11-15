@@ -46,7 +46,7 @@
 		<script src="js/ImageLoader.js"></script>
 
 		<script>
-
+			//test
 			if ( ! Detector.webgl ) {
 						//test alsdlla
 				Detector.addGetWebGLMessage();
@@ -65,7 +65,7 @@
 
 			var clock = new THREE.Clock();
 			var keyboard = new THREEx.KeyboardState();
-			
+
 			var helper;
 
 
@@ -77,12 +77,12 @@
 
 				container = document.getElementById( 'container' );
 				scene = new THREE.Scene();
-				
+
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 40000 );
 				scene.add(camera);
 				camera.position.set(1000,2000,3000);
 				camera.lookAt(scene.position);
-				
+
 				data = generateHeight( worldWidth, worldDepth );
 				console.log(data);
 
@@ -116,7 +116,7 @@
 				scene.add( helper );
 					//VODA
 				var waterTexture = new THREE.ImageUtils.loadTexture( 'images/water512.jpg' );
-				waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping; 
+				waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping;
 				waterTexture.repeat.set( 10, 10 );
 				var waterMaterial = new THREE.MeshBasicMaterial( { map: waterTexture, side: THREE.DoubleSide } );
 				var waterGeometry = new THREE.PlaneBufferGeometry( 30000, 30000, worldWidth - 1, worldDepth - 1 );
@@ -135,7 +135,7 @@
 				};
 
 				var planeTexture = new THREE.Texture();
-				
+
 				var onProgress = function ( xhr ) {
 					if ( xhr.lengthComputable ) {
 						var percentComplete = xhr.loaded / xhr.total * 100;
@@ -206,7 +206,7 @@
 				//SKY
 
 				var skyTexture = new THREE.ImageUtils.loadTexture( 'images/nebo.png' );
-				skyTexture.wrapS = skyTexture.wrapT = THREE.RepeatWrapping; 
+				skyTexture.wrapS = skyTexture.wrapT = THREE.RepeatWrapping;
 				skyTexture.repeat.set( 10, 10 );
 
 				var skyMaterial = new THREE.MeshBasicMaterial( { map: skyTexture, side: THREE.DoubleSide } );
@@ -239,27 +239,27 @@
 
 			var MovingCube;
 			var Cylinder, Cylinder2, sunSphere;
-			
-			
+
+
 			function update(){
 				var hitrost = 0;
-				var moveDistance = 20 ; 
-				var rotateAngle = Math.PI / 100 ;   
+				var moveDistance = 20 ;
+				var rotateAngle = Math.PI / 100 ;
 				Cylinder.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 				Cylinder2.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 				sunSphere.translateY(2.5 * moveDistance);
 				sunSphere.rotateX( rotateAngle / 9.3 );
 				// gravitacija
-			
+
 				MovingCube.translateOnAxis( new THREE.Vector3(0,1,0), (hitrost - moveDistance)/ 2 );
 
-			
+
 			// move forwards/backwards/left/right
 				if ( keyboard.pressed("W") && hitrost <= 20 ){
 					hitrost += 20;
 					MovingCube.translateZ( hitrost );
 				}
-					
+
 				if ( keyboard.pressed("S") && hitrost > 0 ){
 					hitrost -= 20;
 					MovingCube.translateZ( hitrost );
@@ -278,13 +278,13 @@
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
 				if ( keyboard.pressed("up") )
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
-				
+
 				if ( keyboard.pressed("Z") )
 				{
 					MovingCube.position.set(1000,2000,3000);
 					MovingCube.rotation.set(0,0,0);
 				}
-				
+
 				var relativeCameraOffset = new THREE.Vector3(0,850,-3000);
 
 				var cameraOffset = relativeCameraOffset.applyMatrix4( MovingCube.matrixWorld );
@@ -293,10 +293,10 @@
 				camera.position.y = cameraOffset.y;
 				camera.position.z = cameraOffset.z;
 				camera.lookAt( MovingCube.position );
-				
+
 				//camera.updateMatrix();
 				//camera.updateProjectionMatrix();
-						
+
 				stats.update();
 			}
 
