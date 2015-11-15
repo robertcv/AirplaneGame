@@ -69,14 +69,14 @@
 
 			var helper;
 
-			
-			var hitrost;
+
+			var hitrost = 30;
 			init();
 			animate();
 			
 
 			function init() {
-				hitrost = 0;
+				
 				//definiramo novo sceno
 				container = document.getElementById( 'container' );
 				scene = new THREE.Scene();
@@ -262,15 +262,14 @@
 
 
 			// move forwards/backwards/left/right
-				if ( keyboard.pressed("W") && hitrost <= 20 ){
+				if ( keyboard.pressed("W") && hitrost <= 50 ){
 					hitrost += 2;
-					MovingCube.translateZ( hitrost );
 				}
 
 				if ( keyboard.pressed("S") && hitrost > 0 ){
 					hitrost -= 2;
-					MovingCube.translateZ( hitrost );
 				}
+				MovingCube.translateZ( hitrost );
 				// rotate left/right/up/down
 				var rotation_matrix = new THREE.Matrix4().identity();
 				if ( keyboard.pressed("A") )
