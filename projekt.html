@@ -183,7 +183,48 @@
 					scene.add( MovingCube );
 
 				} , onProgress, onError );
+				
 
+				var planeTexture2 = new THREE.Texture();
+
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+				var loader2 = new THREE.ImageLoader( manager );
+				loader2.load( 'mustang/BodyTexture.bmp', function ( image ) {
+					planeTexture2.image = image;
+					planeTexture2.needsUpdate = true;
+				} );
+
+
+				var loader2 = new THREE.OBJLoader( manager );
+				loader2.load( 'mustang/propeler.obj', function ( object ) {
+
+						object.traverse( function ( child ) {
+
+							if ( child instanceof THREE.Mesh ) {
+
+								child.material.map = planeTexture2;
+
+						}
+					} );
+
+					object.position.y = 10000;
+					object.position.z = 1300;
+					object.position.x = 1500;
+                    object.scale.x = 0.1;
+                    object.scale.y = 0.1;
+                    object.scale.z = 0.1;
+
+                    propeler = object;
+					scene.add( propeler );
+
+				} , onProgress, onError );
     			//KOVANEC
 				var coinTexture = new THREE.ImageUtils.loadTexture( 'images/kovanc.png' );
 				var coinGeometry = new THREE.CylinderGeometry( 100, 100, 20, 32 );
@@ -261,7 +302,7 @@
 
 			}
 
-			var MovingCube;
+			var MovingCubem, propeler;
 			var Cylinder, Cylinder2, sunSphere;
 			var spotlight;
 			
@@ -278,7 +319,7 @@
 				// gravitacija
 
 				MovingCube.position.y += (hitrost - 20)/ 2;
-
+				propeler.position.y += (hitrost - 20)/ 2;
 
 			// move forwards/backwards/left/right
 				if ( keyboard.pressed("W") && hitrost <= 20 ){
@@ -289,20 +330,34 @@
 					hitrost -= 2;
 				}
 				MovingCube.translateZ( hitrost );
+				propeler.translateZ( hitrost );
+				propeler.rotateZ( rotateAngle * hitrost);
 				// rotate left/right/up/down
 				var rotation_matrix = new THREE.Matrix4().identity();
-				if ( keyboard.pressed("A") )
+				if ( keyboard.pressed("A") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-				if ( keyboard.pressed("D") )
+					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+				}
+				if ( keyboard.pressed("D") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-				if ( keyboard.pressed("right") )
+					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+				}
+				if ( keyboard.pressed("right") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
-				if ( keyboard.pressed("left") )
+					propeler.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+				}
+				if ( keyboard.pressed("left") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
-				if ( keyboard.pressed("down") )
+					propeler.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
+				}
+				if ( keyboard.pressed("down") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
-				if ( keyboard.pressed("up") )
+					propeler.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+				}
+				if ( keyboard.pressed("up") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+					propeler.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+				}
 
 				if ( keyboard.pressed("Z") )
 				{
@@ -363,7 +418,7 @@
 
 				vector3 = new THREE.Vector3( 0, 0, 0 );
 
-				sun = new THREE.Vector3( 1, 1, 1 );
+				sun = new THREE.Vector3( 2,2,2);
 				sun.normalize();
 
 				canvas = document.createElement( 'canvas' );
