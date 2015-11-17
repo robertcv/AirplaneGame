@@ -42,9 +42,11 @@
 		<script src="js/ImprovedNoise.js"></script>
 		<script src="js/LoadingManager.js"></script>
 		<script src="js/Detector.js"></script>
+		<script src="js/OBJMTLLoader.js"></script>
+		<script src="js/DDSLoader.js"></script>
 		<script src="js/Stats.js"></script>
+		<script src="js/MTLLoader.js"></script>
 		<script src="js/ImageLoader.js"></script>
-
 		<script>
 			
 			if ( ! Detector.webgl ) {
@@ -71,6 +73,13 @@
 
 
 			var hitrost = 0;
+			var g = 9.81;
+			var cubew;
+			var score = 0;
+			var collidableMeshList = [];
+			var MovingCube, propeler;
+			var Cylinder, Cylinder2, sunSphere;
+			var spotlight;
 			init();
 			animate();
 			
@@ -137,7 +146,50 @@
 				var ambient = new THREE.AmbientLight( 0x999999 );
 				scene.add( ambient );
 
+
+
+				console.log("juehj")
 				//LETALO
+
+				//na to tvoje novo letalooo !!!!
+
+				/*
+	            var onProgress = function ( xhr ) {
+	                if ( xhr.lengthComputable ) {
+	                    var percentComplete = xhr.loaded / xhr.total * 100;
+	                    console.log( Math.round(percentComplete, 2) + '% downloaded' );
+	                }
+	            };
+
+	            var onError = function ( xhr ) {};
+
+	            THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+
+	            var loader = new THREE.OBJMTLLoader();
+	            loader.load( 'mustang/LALA.obj', 'mustang/lala.mtl', function ( object ) {
+	                object.traverse( function ( child ) {
+
+	                    if ( child instanceof THREE.Mesh ) {
+
+	                        child.material.side = THREE.DoubleSide;
+
+	                    }
+
+	                } );
+
+
+						object.position.y = 10000;
+						object.position.z = 1300;
+						object.position.x = 1500;
+	                    object.scale.x = 0.0001;
+	                    object.scale.y = 0.0001;
+	                    object.scale.z = 0.0001;
+						
+	                    MovingCube = object
+						scene.add( MovingCube );
+
+	            }, onProgress, onError );*/
+
 				var manager = new THREE.LoadingManager();
 				manager.onProgress = function ( item, loaded, total ) {
 					console.log( item, loaded, total );
@@ -214,34 +266,49 @@
 						}
 					} );
 
-					object.position.y = 10000;
-					object.position.z = 1300;
-					object.position.x = 1500;
-                    object.scale.x = 0.1;
-                    object.scale.y = 0.1;
-                    object.scale.z = 0.1;
+					object.position.y = MovingCube.position.y;
+					object.position.z = MovingCube.position.z;
+					object.position.x = MovingCube.position.x;
+                    object.scale.x = 0.001;
+                    object.scale.y = 0.001;
+                    object.scale.z = 0.001;
 
                     propeler = object;
 					scene.add( propeler );
 
 				} , onProgress, onError );
+
+				
     			//KOVANEC
+				
 				var coinTexture = new THREE.ImageUtils.loadTexture( 'images/kovanc.png' );
-				var coinGeometry = new THREE.CylinderGeometry( 100, 100, 20, 32 );
+				var coinGeometry = new THREE.CylinderGeometry( 200, 100, 20, 32 );
 				var material = new THREE.MeshBasicMaterial( {map: planeTexture} );
 				Cylinder = new THREE.Mesh( coinGeometry.clone(), material );
 				Cylinder2 = new THREE.Mesh( coinGeometry.clone(), material );
 				Cylinder3 = new THREE.Mesh( coinGeometry.clone(), material );
 				Cylinder4 = new THREE.Mesh( coinGeometry.clone(), material );
-				Cylinder.position.y = 1000;
+				Cylinder.position.y = 1500;
+				Cylinder.position.z = 0;
+				Cylinder.position.x = 0;
 				Cylinder.rotateX( - Math.PI / 2 );
 				scene.add( Cylinder);
+				collidableMeshList.push(Cylinder);
 				Cylinder2.rotateX( - Math.PI / 2 );
-				Cylinder2.position.y = 1000;
+				Cylinder2.position.y = 1500;
 				Cylinder2.position.x = 300;
 				Cylinder2.position.z = 300;
-				scene.add(Cylinder2);
+				scene.add(Cylinder2);		
+				collidableMeshList.push(Cylinder2);
 
+
+				var geometryCube = new THREE.BoxGeometry( 350, 50, 50 );
+				var materialCube = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+				cubew = new THREE.Mesh( geometryCube, materialCube );		
+				cubew.position.y = 10050;
+				cubew.position.z = 1370;
+				cubew.position.x = 1475;
+				scene.add( cubew );
 
 				//SUN
 
@@ -301,24 +368,21 @@
 				window.addEventListener( 'resize', onWindowResize, false );
 
 			}
-
-			var MovingCubem, propeler;
-			var Cylinder, Cylinder2, sunSphere;
-			var spotlight;
 			
 
 			function update(){				
-				
+				var delta = clock.getDelta();
 				var rotateAngle = Math.PI / 100 ;
-				Cylinder.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
-				Cylinder2.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+				//Cylinder.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+				//Cylinder2.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 				spotlight.translateY(2.5 * 20);
 				spotlight.rotateX( rotateAngle / 9.3 );
 				sunSphere.translateY(2.5 * 20);
 				sunSphere.rotateX( rotateAngle / 9.3 );
 				// gravitacija
 
-				MovingCube.position.y += (hitrost - 20)/ 2;
+				MovingCube.position.y += ((hitrost - 20)/ 2);
+				cubew.position.y += ((hitrost -20)/2);
 				propeler.position.y += (hitrost - 20)/ 2;
 
 			// move forwards/backwards/left/right
@@ -330,38 +394,45 @@
 					hitrost -= 2;
 				}
 				MovingCube.translateZ( hitrost );
+				cubew.translateZ(hitrost);
 				propeler.translateZ( hitrost );
-				propeler.rotateZ( rotateAngle * hitrost);
+				propeler.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle * hitrost);
 				// rotate left/right/up/down
 				var rotation_matrix = new THREE.Matrix4().identity();
 				if ( keyboard.pressed("A") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
 				}
 				if ( keyboard.pressed("D") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+					propeler.rotateOnAxis( new THREE.Vector3(0,1,0), +rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
 				}
 				if ( keyboard.pressed("right") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 					propeler.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
 				}
 				if ( keyboard.pressed("left") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
 					propeler.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
 				}
 				if ( keyboard.pressed("down") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
 					propeler.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
 				}
 				if ( keyboard.pressed("up") ){
 					MovingCube.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
 					propeler.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+					cubew.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
 				}
 
 				if ( keyboard.pressed("Z") )
 				{
-					MovingCube.position.set(1000,2000,3000);
+					MovingCube.position.set(1500, 10010, 1300);
 					MovingCube.rotation.set(0,0,0);
 				}
 
@@ -376,6 +447,24 @@
 
 				//camera.updateMatrix();
 				//camera.updateProjectionMatrix();
+
+				var originPoint = cubew.position.clone();
+
+				for (var vertexIndex = 0; vertexIndex < cubew.geometry.vertices.length; vertexIndex++)
+				{		
+					var localVertex = cubew.geometry.vertices[vertexIndex].clone();
+					var globalVertex = localVertex.applyMatrix4( cubew.matrix );
+					var directionVector = globalVertex.sub( cubew.position );
+					
+					var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+					var collisionResults = ray.intersectObjects( collidableMeshList );
+					if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
+						score += 1;
+						console.log(score);
+					}
+
+					}
+			
 
 				stats.update();
 			}
