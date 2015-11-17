@@ -30,9 +30,8 @@
 		</style>
 	</head>
 	<body>
-
+	<textarea style="width:360px;height:20px;padding:20px;border-radius:10px;border:10px solid #EE872A;font-size:120%;" rows="12" cols="25" id="output"></textarea>
 		<div id="container"><br /><br /><br /><br /><br />Generating world...</div>
-		<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> - webgl terrain raycasting demo</div>
 
 		<script src="js/three.min.js"></script>
 
@@ -460,7 +459,8 @@
 					var collisionResults = ray.intersectObjects( collidableMeshList );
 					if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
 						score += 1;
-						console.log(score);
+    					document.getElementById("output").value = score;
+
 					}
 
 					}
